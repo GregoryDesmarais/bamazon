@@ -12,6 +12,7 @@ var connection = mysql.createConnection({
 
 connection.connect(function(err) {
     if (err) throw err;
+    console.clear();
     showStock();
 });
 
@@ -31,14 +32,15 @@ function showStock() {
                 name: "selectedItem",
                 validate: function(input) {
                     if (!itemIDs.includes(parseInt(input))) {
-                        console.log("\n" + stock);
-                        console.log("\nPlease enter a valid ID\n");
-                        return false;
+                        console.clear();
+                        console.log(stock);
+                        return "Please enter a valid ID";
                     } else return true;
                 }
             }, {
                 message: "How many would you like to purchase?",
-                name: "requestedQty"
+                name: "requestedQty",
+                validate: validateInteger
             }]).then(function(ans) {
                 connection.query(`SELECT * from products WHERE item_id="${ans.selectedItem}"`, function(err, res) {
                     if (err) throw err;
@@ -48,14 +50,26 @@ function showStock() {
                             if (err) throw err;
                             console.log(`
 Order placed!
-Your total cost is: $${price * parseInt(ans.requestedQty)}`);
+Your total cost is: $${(price * parseInt(ans.requestedQty)).toFixed(2)}`);
                         })
                         connection.end();
                     } else {
-                        console.log("Insufficient Quantity");
+                        console.clear();
+                        console.log("Insufficient Quantity in Stock\n\n");
                         showStock();
                     }
                 })
             })
         });
+}
+
+function validateInteger(value) {
+    var integer = Number.isInteger(parseFloat(value));
+    var sign = Math.sign(value);
+
+    if (integer && (sign === 1)) {
+        return true;
+    } else {
+        return 'Please enter a whole non-zero number.';
+    }
 }
