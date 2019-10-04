@@ -49,5 +49,5 @@ To run the manager interface use the following command:
 #### Manager
 ![img](/assets/img/managerDemo.gif)
 
-### Customer
+#### Customer
 ![img](/assets/img/customerDemo.gif)
