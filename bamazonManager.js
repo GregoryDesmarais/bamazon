@@ -109,13 +109,17 @@ function addToInventory() {
                 name: "requestedQty",
                 validate: validateInteger
             }]).then(function(ans) {
-                var selectedItem = res[parseInt(ans.selectedItem) - 1];
+                var selectedItem;
+                for (x in res) {
+                    if (res[x].item_id === parseInt(ans.selectedItem))
+                        selectedItem = res[x];
+                }
                 var newQuantity = selectedItem.stock_quantity + parseInt(ans.requestedQty);
                 connection.query(`UPDATE products SET ? WHERE ?`, [{
                             stock_quantity: newQuantity
                         },
                         {
-                            item_id: parseInt(ans.selectedItem)
+                            item_id: selectedItem.item_id
                         }
                     ],
                     function(err, res) {
